@@ -1,12 +1,18 @@
-<h1>{{ question.question_text }}</h1>
+{% if question_list %}
+<form action = "{% url 'quizes:results' 1 %}" method = "post">{% csrf_token %}
+    {% for question in question_list %}
+    <form>
+    	<h1>{{ question.question_text }}</h1>
+        	{% for choice in question.choice_set.all %}
+        	<input type = "radio" name = "choice" id = "choice{{forloop.counter}}" value="{{choice.id}}"/>
+        	<label for = "choice{{forloop.counter}}">{{choice.choice_text}}</label><br/>
+        	{% endfor %}
+     </form>   	
+    {% endfor %}
+    <!-- <input type="submit" value="submit"/> -->
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-<form action="{% url 'quizes:submit' question.id %}" method="post">
-{% csrf_token %}
-{% for choice in question.choice_set.all %}
-    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
-    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
-{% endfor %}
-<input type="submit" value="submit" />
+<a href="{% url 'quizes:results' 1 %}">Submit</a>
 </form>
+{% else %}
+    <p>No questions to display.</p>
+{% endif %}
